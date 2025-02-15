@@ -4,6 +4,33 @@ import Auth.AdminAuth as auth
 import database.complaints_database as db
 import AdminDashboard as ad
 
+    
+def show_complaint_details(complaint):
+    #window
+    detail_window = ctk.CTkToplevel()
+    detail_window.title("Complaints Details")
+    detail_window.geometry("600x400")
+    detail_window.transient()  # Keep on top of the main window
+    detail_window.grab_set()  # Disable interaction with main window
+    detail_window.focus_force()
+
+    #detail textS
+    detail_text = f"""
+    Complaint ID: {complaint['id']}
+    Email: {complaint['email']}
+    SAP ID: {complaint['sap_id']}
+    Lab Number: {complaint['lab_number']}
+    Machine Number: {complaint['machine_number']}
+    Problem: {complaint['problem']}
+    Description: {complaint['problem_description']}
+    Encountred similar problem = {complaint['similar_problem']}
+    """
+
+    details_label = ctk.CTkLabel(detail_window, text=detail_text, font=("Courier New", 18), justify="left")
+    details_label.pack(padx = 20, pady = 20 )
+    detail_window.mainloop()
+
+
 
 def complaint_Cards(email):
     adEmail = email
@@ -45,8 +72,10 @@ def complaint_Cards(email):
                 complaint_frame, 
                 text=status, 
                 fg_color="green" if status == "COMPLETED" else "orange",
-                command=lambda cid=complaint_id, cs=status: db.update_status(cid, cs)  # Pass arguments
+                command=lambda cid=complaint_id, cs=status, admail = adEmail: db.update_status(cid, cs, admail)  # Pass arguments
             )
             status_btn.pack(side="right", padx=10, pady=5)
+
+            complaint_frame.bind("<Button-1>", lambda event, comp = complaint: show_complaint_details(comp))
 
 

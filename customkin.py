@@ -29,7 +29,7 @@ def submitComplaint():
     if not email or not sap_id or not lab_number or not machine_number or  problem == "Select a problem" or similar_problem == "Select"  or not problemDiscription:
         messagebox.showerror("Error", "Please enter all of the credentials.")
         return
-    if len(sap_id) != 9:
+    if len(sap_id) != 11:
         messagebox.showerror("WRONG SAP ID", "Please enter correct sap id")
         return
     if lab_numberInt <=0 or lab_numberInt > 6:
@@ -41,13 +41,10 @@ def submitComplaint():
     
 
     
-    if lab_number == "1" or lab_number == "2" or lab_number == "6":
-        handled_by = "TECH 1"
-    else:
-        handled_by = "TECH 2"  
+
     
 
-    res = cd.insertData(email, sap_id, lab_number, machine_number, problem, similar_problem, status, handled_by, problemDiscription)
+    res = cd.insertData(email, sap_id, lab_number, machine_number, problem, similar_problem, status, problemDiscription)
     if res.data:
          messagebox.showinfo("Success", "Complaint submitted successfully!")
 
