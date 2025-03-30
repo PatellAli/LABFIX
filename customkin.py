@@ -2,7 +2,7 @@ import customtkinter as ctk
 from tkinter import messagebox
 
 import database.complaints_database as cd
-
+import Funcs.functions as f
 # Set Appearance Mode and Theme
 ctk.set_appearance_mode("dark")  # Options: "dark", "light", "system"
 ctk.set_default_color_theme("green")  # Themes: "blue", "green", "dark-blue"
@@ -29,7 +29,13 @@ def submitComplaint():
     if not email or not sap_id or not lab_number or not machine_number or  problem == "Select a problem" or similar_problem == "Select"  or not problemDiscription:
         messagebox.showerror("Error", "Please enter all of the credentials.")
         return
+    if f.eamil_valid(email) == False:
+        messagebox.showerror("INVALID Email", "Please enter correct Email")
+        return
     if len(sap_id) != 11:
+        messagebox.showerror("WRONG SAP ID", "Please enter correct sap id")
+        return
+    if f.sap_valid(sap_id) == False:
         messagebox.showerror("WRONG SAP ID", "Please enter correct sap id")
         return
     if lab_numberInt <=0 or lab_numberInt > 6:

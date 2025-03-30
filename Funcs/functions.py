@@ -84,6 +84,7 @@ from tkinter import messagebox
 import Auth.AdminAuth as auth
 import database.complaints_database as db
 import AdminDashboard as ad
+import re
 
 def show_complaint_details(complaint):
     # # Window
@@ -130,6 +131,10 @@ def complaint_Cards(email):
         # Get the status
         status = complaint["status"]
         complaint_id = complaint["id"]
+        stmail = complaint["email"]
+        lab = complaint["lab_number"]
+        macNum = complaint["machine_number"]
+        prob = complaint["problem"]
 
         # Determine the parent tab based on the status
         if status == "PENDING":
@@ -153,8 +158,23 @@ def complaint_Cards(email):
                 complaint_frame, 
                 text=status, 
                 bg="green" if status == "COMPLETED" else "orange",
-                command=lambda cid=complaint_id, cs=status, admail=adEmail: db.update_status(cid, cs, admail)  # Pass arguments
+                command=lambda cid=complaint_id, cs=status, admail=adEmail: db.update_status(cid, cs, admail, stmail,lab, macNum, prob)  # Pass arguments
             )
             status_btn.pack(side="right", padx=10, pady=5)
 
             complaint_frame.bind("<Button-1>", lambda event, comp=complaint: ad.show(comp))
+
+def eamil_valid(email):
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+    if(re.fullmatch(regex, email)):
+        return True
+    else:
+        return False
+    
+def sap_valid(sap):
+    regex = r'^57\d{3}(?:1[0-9]|2[0-9])\d{2}$'
+    
+    if re.fullmatch(regex, sap):
+        return True
+    else:
+        return False

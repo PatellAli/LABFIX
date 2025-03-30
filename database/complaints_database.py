@@ -1,6 +1,7 @@
 from tkinter import messagebox
 from supabase_config import supabase
 import Funcs.functions as fn
+import Funcs.email_send as es
 
 def count_tech_task():
     res_tech2 = supabase.table("complaints").select("*", count="exact").eq("handled_by", "TECH 2").execute()
@@ -58,7 +59,7 @@ def fetchData(email):
     return res
 
 
-def update_status(complaint_id, new_status, email):
+def update_status(complaint_id, new_status, email, stmail,lab, macNum, prob):
     admail = email
     flag = False
     try:
@@ -73,6 +74,8 @@ def update_status(complaint_id, new_status, email):
 
         data = {"status": new_status}
         res = (supabase.table("complaints").update(data).eq("id", complaint_id).execute())
+        es.sendEmail(stmail, new_status, complaint_id, lab, macNum, prob)
+
         fn.complaint_Cards(admail)
         if flag == False:
             messagebox.showinfo("SUCCESS", f"STATUS UPDATED! COMPLAINT ID: {complaint_id}, {st} ----> {new_status}")
