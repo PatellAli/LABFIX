@@ -60,28 +60,34 @@ def fetchData(email):
 
 
 def update_status(complaint_id, new_status, email, stmail,lab, macNum, prob):
+    
     admail = email
     flag = False
-    try:
-        st = new_status
-        if new_status == "PENDING":
-            new_status = "INPROGRESS"
-        elif new_status == "INPROGRESS":
-            new_status = "COMPLETED"
-        elif new_status == "COMPLETED":
-            messagebox.showinfo("INFO", f"ALREADY COMPLETED") 
-            flag = True
+    confirm  = messagebox.askyesno("Confirm Update", f"Are you sure you want to update the status of Complaint ID: {complaint_id}")
 
-        data = {"status": new_status}
-        res = (supabase.table("complaints").update(data).eq("id", complaint_id).execute())
-        es.sendEmail(stmail, new_status, complaint_id, lab, macNum, prob)
-
-        fn.complaint_Cards(admail)
-        if flag == False:
-            messagebox.showinfo("SUCCESS", f"STATUS UPDATED! COMPLAINT ID: {complaint_id}, {st} ----> {new_status}")
-
-    except Exception as e:
-        messagebox.showerror("Error", f"{e}")
-        print(e)
+    if not confirm :
         return
+    else:
+        try:
+            st = new_status
+            if new_status == "PENDING":
+                new_status = "INPROGRESS"
+            elif new_status == "INPROGRESS":
+                new_status = "COMPLETED"
+            elif new_status == "COMPLETED":
+                messagebox.showinfo("INFO", f"ALREADY COMPLETED") 
+                flag = True
+
+            data = {"status": new_status}
+            res = (supabase.table("complaints").update(data).eq("id", complaint_id).execute())
+            es.sendEmail(stmail, new_status, complaint_id, lab, macNum, prob)
+
+            fn.complaint_Cards(admail)
+            if flag == False:
+                messagebox.showinfo("SUCCESS", f"STATUS UPDATED! COMPLAINT ID: {complaint_id}, {st} ----> {new_status}")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"{e}")
+            print(e)
+            return
 
