@@ -1,10 +1,6 @@
-import tkinter as tk
 import customtkinter as ctk
-from tkinter import messagebox
-import Auth.AdminAuth as auth
 import database.complaints_database as db
 import AdminDashboard as ad
-from tkinter import PhotoImage
 import re
 
 
