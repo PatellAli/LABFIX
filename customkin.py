@@ -46,10 +46,6 @@ def submitComplaint():
         return
     
 
-    
-
-    
-
     res = cd.insertData(email, sap_id, lab_number, machine_number, problem, similar_problem, status, problemDiscription)
     if res.data:
          messagebox.showinfo("Success", "Complaint submitted successfully!")

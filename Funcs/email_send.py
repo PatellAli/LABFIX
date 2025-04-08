@@ -4,7 +4,6 @@ from dotenv import load_dotenv, dotenv_values
 
 config = dotenv_values(".env")
 
-# Use your Gmail address and App Password
 EMAIL_ADDRESS =  config['EMAIL']
 EMAIL_PASSWORD = config['PASSWORD']
 

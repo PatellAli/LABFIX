@@ -28,7 +28,6 @@ def complaint_Cards(email):
             for widget in frame.winfo_children():
                 widget.destroy()
 
-    # Fetch all complaints
     complaints = db.fetchData(adEmail).data    
     print(type(complaints))
 

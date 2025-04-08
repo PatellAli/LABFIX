@@ -91,3 +91,15 @@ def update_status(complaint_id, new_status, email, stmail,lab, macNum, prob):
             print(e)
             return
 
+
+def lab_complaints():
+    lab1 = supabase.table("complaints").select("lab_number", count="exact").eq("lab_number", "1").execute()
+    lab2 = supabase.table("complaints").select("lab_number", count="exact").eq("lab_number", "2").execute()
+    lab3 = supabase.table("complaints").select("lab_number", count="exact").eq("lab_number", "3").execute()
+    lab4 = supabase.table("complaints").select("lab_number", count="exact").eq("lab_number", "4").execute()
+    lab5 = supabase.table("complaints").select("lab_number", count="exact").eq("lab_number", "5").execute()
+    lab6 = supabase.table("complaints").select("lab_number", count="exact").eq("lab_number", "6").execute()
+
+    return (lab1,lab2,lab3,lab4,lab5,lab6)
+
+    

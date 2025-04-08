@@ -1,12 +1,14 @@
 import customtkinter as ctk
 import Funcs.functions as f
 import Auth.AdminAuth as auth
+import graphs as g
 
 ctk.set_appearance_mode("dark")  # Dark mode
 ctk.set_default_color_theme("green")
 
 tab_dic = {}
 complaint_info = None
+graphwin = None
 
 def show(complaint):
     global complaint_info
@@ -20,46 +22,93 @@ def show(complaint):
     Description: {complaint['problem_description']}
     Encountered similar problem: {complaint['similar_problem']}
     """
-    complaint_info.configure(text=detail_text)
+    complaint_info.configure(text=detail_text, anchor="w", justify="left")
 
 def AdminDashboard(email):
-    global tab_dic, complaint_info
+    global tab_dic, complaint_info, graphwin
     window = ctk.CTk()
     window.geometry("1200x700")
-    window.attributes("-fullscreen",True)
-    window.title("Complaint Form")
+    window.title("Complaint Dashboard")
 
-    # User Email Label
-    email_label = ctk.CTkLabel(window, text=email, font=("Courier New", 24, "bold"))
-    email_label.place(relx=0.94, rely=0.09, anchor="e")
+    # Enable window resizing
+    window.rowconfigure(0, weight=1)
+    window.columnconfigure(0, weight=1)
 
-    # Complaint Info Section
-    complaint_tab = ctk.CTkFrame(window, corner_radius=10)
-    complaint_tab.place(relx=0.17, rely=0.60, anchor="center", relheight=0.69, relwidth=0.30)
+    # Main Layout Frame
+    main_frame = ctk.CTkFrame(window)
+    main_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-    complaint_tab_head = ctk.CTkLabel(complaint_tab, text="COMPLAINT INFO", font=("Courier New", 24, "bold"))
-    complaint_tab_head.pack()
+    # Configure grid for responsiveness
+    main_frame.rowconfigure(1, weight=1)
+    main_frame.columnconfigure(0, weight=1)
 
-    complaint_info = ctk.CTkLabel(complaint_tab, text="", font=("Courier New", 18), justify="left")
-    complaint_info.pack()
+    # Top Bar Frame (User Email, Logout, and Controls)
+    top_bar = ctk.CTkFrame(main_frame, height=60)
+    top_bar.grid(row=0, column=0, columnspan=2, sticky="nsew", pady=(0, 10))
 
-    # Tabs
-    Tab = ctk.CTkTabview(window)
-    Tab.place(relx=0.66, rely=0.60, anchor="center", relwidth=0.65, relheight=0.70)
+    # Make top bar expandable
+    top_bar.columnconfigure(1, weight=1)
+
+    email_label = ctk.CTkLabel(top_bar, text=email, font=("Courier New", 20, "bold"))
+    email_label.grid(row=0, column=1, sticky="e", padx=20, pady=10)
+
+    # log_out_btn = ctk.CTkButton(top_bar, text="LOGOUT", font=("Courier New", 18, "bold"), command=auth.SignOutUser)
+    # log_out_btn.grid(row=0, column=0, sticky="w", padx=20, pady=10)
+
+    # Main Content Frame (Complaint Info & Tabs)
+    content_frame = ctk.CTkFrame(main_frame)
+    content_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
+
+    # Enable resizing for content_frame
+    content_frame.columnconfigure(1, weight=1)
+
+    content_frame.rowconfigure(0, weight=1)
+    content_frame.rowconfigure(1, weight=1)
+
+    # Complaint Info Section (Left Side)
+    complaint_tab = ctk.CTkFrame(content_frame)
+    complaint_tab.grid(row=0, column=0, sticky="news", padx=10, pady=10)
+
+    complaint_tab.columnconfigure(0, weight=1)
+    complaint_tab.rowconfigure(1, weight=1)
+
+    complaint_tab_head = ctk.CTkLabel(complaint_tab, text="COMPLAINT INFO", font=("Courier New", 22, "bold"))
+    complaint_tab_head.grid(row=0, column=0, pady=10, sticky = "w")
+
+    complaint_info = ctk.CTkLabel(complaint_tab, text="", font=("Courier New", 20), justify="left", wraplength=350, anchor="w")
+    complaint_info.grid(row=1, column=0, columnspan = 3,sticky="nsew", padx=1, pady=1)
+
+    clrBtn = ctk.CTkButton(complaint_tab, text="CLEAR", font=("Courier New", 22, "bold"), command=lambda: complaint_info.configure(text = ""))
+    clrBtn.grid(row=0, column = 1,sticky="e", padx = 5)
+
+    graphwin = ctk.CTkFrame(content_frame)
+    graphwin.grid(row=1, column = 0,sticky = "news", padx = 10, pady = 10)
+    graphwin.rowconfigure(0, weight=1)
+    graphwin.columnconfigure(0, weight=1)
+
+    
+    showGraph = ctk.CTkButton(content_frame, text="SHOW", font=("Courier New", 22, "bold"), command=lambda: g.over_all_graph(graphwin))
+    showGraph.grid(row=2, column = 0,sticky="w", padx = 150, pady = 5)
+
+    clrgraph = ctk.CTkButton(content_frame, text="CLEAR GRAPH", command=lambda: g.clean_window())
+    clrgraph.grid(row = 2, column = 0, sticky = "w")
+    
+
+    # Complaint Tabs (Right Side)
+    Tab = ctk.CTkTabview(content_frame)
+    Tab.grid(row=0, column=1, rowspan = 3,sticky="nsew", padx=10, pady=10)
 
     tab_dic["newProblems"] = Tab.add("NEW PROBLEMS")
     tab_dic["inProgress"] = Tab.add("IN PROGRESS")
     tab_dic["completed"] = Tab.add("COMPLETED")
 
-    # Buttons
-    log_out_btn = ctk.CTkButton(window, text="LOGOUT", font=("Courier New", 24, "bold"), width=120, height=40, command=auth.SignOutUser)
-    log_out_btn.place(relx=0.03, rely=0.09, anchor="w")
-
-    exit_btn = ctk.CTkButton(window, text="❌", width=30, height=30, fg_color="red", command=window.destroy)
-    exit_btn.place(relx=1, rely=0.00, anchor="ne")
-
-    minimize_btn = ctk.CTkButton(window, text="_", width=30, height=30, command=window.iconify)
-    minimize_btn.place(relx=0.98, rely=0.00, anchor="ne")
-
+    # Call function to load complaints
     f.complaint_Cards(email)
+    def on_close():
+        g.clean_window()
+        print("window close")
+        window.destroy()
+    window.protocol("WM_DELETE_WINDOW", on_close)
+
     window.mainloop()
+
