@@ -16,8 +16,7 @@ def submitComplaint():
     problem = problemComboBox.get()
     similar_problem = ecounertedProblemDropDown.get()
     problemDiscription =  problemDiscriptionText.get("1.0", "end").strip()
-    handled_by = "NA"
-    status = "PENDING"
+    status = 1
     try:
         lab_numberInt = int(lab_number)
         machine_numberInt  = int(machine_number)
@@ -34,10 +33,11 @@ def submitComplaint():
         return
     if len(sap_id) != 11:
         messagebox.showerror("WRONG SAP ID", "Please enter correct sap id")
+        print("IN SAP LEN")
         return
-    if f.sap_valid(sap_id) == False:
-        messagebox.showerror("WRONG SAP ID", "Please enter correct sap id")
-        return
+    # if f.sap_valid(sap_id) == False:
+    #     messagebox.showerror("WRONG SAP ID", "Please enter correct sap id")
+    #     return
     if lab_numberInt <=0 or lab_numberInt > 6:
         messagebox.showerror("WRONG LAB NUMBER", "please enter a correct lab number")
         return
@@ -104,7 +104,7 @@ problemComboBox = ctk.CTkComboBox(form, values=options, font=input_font, width=3
 problemComboBox.grid(row=5, column=1, padx=10, pady=5)
 problemComboBox.set("Select a problem")
 
-# Problem Description
+# Problem Description   
 ctk.CTkLabel(form, text='PROBLEM DESCRIPTION:', font=label_font).grid(row=6, column=0, sticky="w", padx=10, pady=5)
 problemDiscriptionText = ctk.CTkTextbox(form, font=("Courier New", 14), height=100, width=300)
 problemDiscriptionText.grid(row=6, column=1, padx=10, pady=5)

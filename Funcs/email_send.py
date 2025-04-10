@@ -9,17 +9,25 @@ EMAIL_PASSWORD = config['PASSWORD']
 
 def sendEmail(email, status, id, lab, macNum, prob):
 
+    s = None
+    if status == 1:
+        s = "PENDING"
+    elif status == 2:
+        s = "INPROGRESS"
+    elif status == 3:
+        s = "COMPLETED"
+
     html_content = f"""
 <html>
 <body>
     <p>Dear <strong>Student</strong>,</p>
-    <p>We would like to inform you that the status of your complaint (Complaint ID: <strong>{id}</strong>) has been updated to: <strong>{status}</strong>.</p>
+    <p>We would like to inform you that the status of your complaint (Complaint ID: <strong>{id}</strong>) has been updated to: <strong>{s}</strong>.</p>
 
     <h3>Complaint Details:</h3>
     <ul>
         <li><strong>Complaint ID:</strong> {id}</li>
         <li><strong>Issue Reported:</strong> {prob}</li>
-        <li><strong>Current Status:</strong> {status}</li>
+        <li><strong>Current Status:</strong> {s}</li>
         <li><strong>Machine number:</strong> {macNum}</li>
         <li><strong>Lab number:</strong> {lab}</li>
 

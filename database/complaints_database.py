@@ -4,23 +4,23 @@ import Funcs.functions as fn
 import Funcs.email_send as es
 
 def count_tech_task():
-    res_tech2 = supabase.table("complaints").select("*", count="exact").eq("handled_by", "TECH 2").execute()
-    res_tech3 = supabase.table("complaints").select("*", count="exact").eq("handled_by", "TECH 3").execute()
+    res_tech2 = supabase.table("complaints").select("*", count="exact").eq("handled_by", 2).execute()
+    res_tech3 = supabase.table("complaints").select("*", count="exact").eq("handled_by", 3).execute()
 
     tech2Count = res_tech2.count
     tech3Count = res_tech3.count
 
     if tech2Count > tech3Count:
-        return "TECH 3"
+        return 3
     else:
-        return "TECH 2"
+        return 2
 
 
 #insert Data
 def insertData(email, sap_id, lab_number, machine_number, problem, similar_problem, status, problem_description):
 
     if lab_number == '1' or lab_number == '2' or lab_number == '6':
-        handled_by = "TECH 1"
+        handled_by = 1
     else:
         handled_by = count_tech_task()
 
@@ -44,9 +44,9 @@ def fetchData(email):
     adEmail = email
 
     tech_mapping = {
-        "tech1@gmail.com": "TECH 1",
-        "tech2@gmail.com": "TECH 2",
-        "tech3@gmail.com": "TECH 3",
+        "tech1@gmail.com": 1,
+        "tech2@gmail.com": 2,
+        "tech3@gmail.com": 3,
     }
 
     handled_by_tech =  tech_mapping.get(adEmail)
@@ -70,11 +70,14 @@ def update_status(complaint_id, new_status, email, stmail,lab, macNum, prob):
     else:
         try:
             st = new_status
-            if new_status == "PENDING":
-                new_status = "INPROGRESS"
-            elif new_status == "INPROGRESS":
-                new_status = "COMPLETED"
-            elif new_status == "COMPLETED":
+            s = None
+            if new_status == 1:
+                new_status = 2
+                s = "INPROGRESS"
+            elif new_status == 2:
+                new_status = 3
+                s = "COMPLETED"
+            elif new_status == 3:
                 messagebox.showinfo("INFO", f"ALREADY COMPLETED") 
                 flag = True
 
@@ -84,7 +87,7 @@ def update_status(complaint_id, new_status, email, stmail,lab, macNum, prob):
 
             fn.complaint_Cards(admail)
             if flag == False:
-                messagebox.showinfo("SUCCESS", f"STATUS UPDATED! COMPLAINT ID: {complaint_id}, {st} ----> {new_status}")
+                messagebox.showinfo("SUCCESS", f"STATUS UPDATED! COMPLAINT ID: {complaint_id}, NEW STATUS:  {s}")
 
         except Exception as e:
             messagebox.showerror("Error", f"{e}")
@@ -101,5 +104,21 @@ def lab_complaints():
     lab6 = supabase.table("complaints").select("lab_number", count="exact").eq("lab_number", "6").execute()
 
     return (lab1,lab2,lab3,lab4,lab5,lab6)
+
+
+def lab_wise_complaints(lab):
+   monitor =  supabase.table("complaints").select("*", count="exact").eq("lab_number", lab).eq("problem", "Monitor").execute()
+   mouse =  supabase.table("complaints").select("*", count="exact").eq("lab_number", lab).eq("problem", "Mouse").execute()
+   keyboard =  supabase.table("complaints").select("*", count="exact").eq("lab_number", lab).eq("problem", "Keyboard").execute()
+   internet =  supabase.table("complaints").select("*", count="exact").eq("lab_number", lab).eq("problem", "Internet").execute()
+   software =  supabase.table("complaints").select("*", count="exact").eq("lab_number", lab).eq("problem", "Software").execute()
+   other =  supabase.table("complaints").select("*", count="exact").eq("lab_number", lab).eq("problem", "Other").execute()
+
+   return (monitor, mouse, keyboard, internet, software, other)
+
+
+
+
+
 
     

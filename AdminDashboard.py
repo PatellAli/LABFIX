@@ -86,12 +86,17 @@ def AdminDashboard(email):
     graphwin.rowconfigure(0, weight=1)
     graphwin.columnconfigure(0, weight=1)
 
-    
-    showGraph = ctk.CTkButton(content_frame, text="SHOW", font=("Courier New", 22, "bold"), command=lambda: g.over_all_graph(graphwin))
-    showGraph.grid(row=2, column = 0,sticky="w", padx = 150, pady = 5)
+    def on_lab_select(selected_lab):
+        g.over_all_graph(graphwin, selected_lab)
+
+    select_lab = ctk.CTkComboBox(content_frame, font=("Courier New", 22, "bold"), values=["1","2","3","4","5","6","All"], state='readonly', width=180, command= on_lab_select)
+    select_lab.grid(row=2, column = 0,sticky="w", padx = 150, pady = 5)
+    select_lab.set("Select lab")
 
     clrgraph = ctk.CTkButton(content_frame, text="CLEAR GRAPH", command=lambda: g.clean_window())
     clrgraph.grid(row = 2, column = 0, sticky = "w")
+
+
     
 
     # Complaint Tabs (Right Side)
@@ -108,6 +113,7 @@ def AdminDashboard(email):
         g.clean_window()
         print("window close")
         window.destroy()
+
     window.protocol("WM_DELETE_WINDOW", on_close)
 
     window.mainloop()

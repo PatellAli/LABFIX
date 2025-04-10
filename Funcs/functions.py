@@ -32,6 +32,7 @@ def complaint_Cards(email):
     print(type(complaints))
 
     for complaint in complaints:
+        st = None
         status = complaint["status"]
         complaint_id = complaint["id"]
         stmail = complaint["email"]
@@ -40,12 +41,18 @@ def complaint_Cards(email):
         prob = complaint["problem"]
 
         # Determine parent tab
-        if status == "PENDING":
+        if status == 1:
             parent_tab = ad.tab_dic.get("newProblems")
-        elif status == "INPROGRESS":
+            st = "PENDING"
+            c = "red"
+        elif status == 2:
             parent_tab = ad.tab_dic.get("inProgress")
-        elif status == "COMPLETED":
+            st = "INPROGRESS"
+            c = "orange"
+        elif status == 3:
             parent_tab = ad.tab_dic.get("completed")
+            st = "COMPLETED"
+            c = "green"
 
         if parent_tab:
             complaint_frame = ctk.CTkFrame(parent_tab, fg_color="#36454F")
@@ -58,10 +65,10 @@ def complaint_Cards(email):
             # Status Button
             status_btn = ctk.CTkButton(
                 complaint_frame, 
-                text=status, 
-                fg_color="green" if status == "COMPLETED" else "orange",
+                text=st, 
+                fg_color = c,
                 command=lambda cid=complaint_id, cs=status, admail=adEmail: db.update_status(cid, cs, admail, stmail, lab, macNum, prob)
-            )
+                )
             status_btn.pack(side="right", padx=10, pady=5)
 
             complaint_frame.bind("<Button-1>", lambda event, comp=complaint: ad.show(comp))
@@ -74,7 +81,8 @@ def eamil_valid(email):
         return False
     
 def sap_valid(sap):
-    regex = r'^57\d{3}(?:1[0-9]|2[0-9])\d{2}$'
+    # regex = r'^57\d{3}(?:1[0-9]|2[0-9])\d{2}$'
+    regex = r'^57\d{3}(2[1-5])\d{3}$'
     
     if re.fullmatch(regex, sap):
         return True
